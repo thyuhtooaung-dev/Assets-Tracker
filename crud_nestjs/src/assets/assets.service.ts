@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,17 +28,35 @@ export class AssetsService {
   }
 
   async findOne(id: string) {
-    return await this.assetRepository.findOne({
+    const asset = await this.assetRepository.findOne({
       where: { id },
       relations: ['category', 'employee'],
     });
+
+    if (!asset) {
+      throw new NotFoundException(`Asset with id "${id}" not found`);
+    }
+
+    return asset;
   }
 
-  update(id: string, updateAssetDto: UpdateAssetDto) {
-    return `This action updates a #${id} asset`;
+  async update(id: string, updateAssetDto: UpdateAssetDto) {
+    const asset = await this.findOne(id);
+    const { categoryId, ...assetData } = updateAssetDto;
+
+    Object.assign(asset, assetData);
+
+    if (categoryId !== undefined) {
+      asset.category = { id: categoryId } as Asset['category'];
+    }
+
+    return await this.assetRepository.save(asset);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} asset`;
+  async remove(id: string) {
+    const asset = await this.findOne(id);
+    await this.assetRepository.remove(asset);
+
+    return { message: `Asset with id "${id}" deleted successfully` };
   }
 }
