@@ -12,12 +12,7 @@ export class AssetsService {
   ) {}
 
   async create(createAssetDto: CreateAssetDto) {
-    const newAsset = this.assetRepository.create({
-      name: createAssetDto.name,
-      serialNumber: createAssetDto.serialNumber,
-      status: createAssetDto.status,
-      category: { id: createAssetDto.categoryId },
-    });
+    const newAsset = this.assetRepository.create(createAssetDto);
     return await this.assetRepository.save(newAsset);
   }
 
@@ -44,13 +39,18 @@ export class AssetsService {
     const asset = await this.findOne(id);
     const { categoryId, ...assetData } = updateAssetDto;
 
-    Object.assign(asset, assetData);
+    const updatedAsset: Asset = {
+      ...asset,
+      ...assetData,
+      ...(categoryId !== undefined
+        ? ({ category: { id: categoryId } as Asset['category'] } as Pick<
+            Asset,
+            'category'
+          >)
+        : {}),
+    };
 
-    if (categoryId !== undefined) {
-      asset.category = { id: categoryId } as Asset['category'];
-    }
-
-    return await this.assetRepository.save(asset);
+    return await this.assetRepository.save(updatedAsset);
   }
 
   async remove(id: string) {
