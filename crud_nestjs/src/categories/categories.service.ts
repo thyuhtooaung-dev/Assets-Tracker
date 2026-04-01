@@ -19,7 +19,12 @@ export class CategoriesService {
   }
 
   async findAll() {
-    return this.categoryRepository.find({ relations: ['assets'] });
+    return this.categoryRepository.find({
+      relations: ['assets'],
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
   }
 
   async findOne(id: string) {

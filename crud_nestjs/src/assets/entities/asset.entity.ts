@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Employee } from '../../employees/entities/employee.entity';
 import { Category } from '../../categories/entities/category.entity';
 
@@ -28,4 +35,10 @@ export class Asset {
 
   @ManyToOne(() => Employee, (employee) => employee.assets, { nullable: true })
   employee: Employee | null;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
 }

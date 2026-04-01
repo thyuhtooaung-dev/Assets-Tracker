@@ -18,7 +18,12 @@ export class EmployeesService {
   }
 
   async findAll() {
-    return await this.employeeRepository.find({ relations: ['assets'] });
+    return await this.employeeRepository.find({
+      relations: ['assets'],
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
   }
 
   async findOne(id: string) {
@@ -32,6 +37,14 @@ export class EmployeesService {
     }
 
     return employee;
+  }
+
+  async getCount() {
+    const totalEmployees = await this.employeeRepository.count();
+
+    return {
+      totalEmployees,
+    };
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {

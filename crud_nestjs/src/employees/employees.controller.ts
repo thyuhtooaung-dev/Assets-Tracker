@@ -25,6 +25,11 @@ export class EmployeesController {
     return this.employeesService.findAll();
   }
 
+  @Get('count')
+  getCount() {
+    return this.employeesService.getCount();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.employeesService.findOne(id);
