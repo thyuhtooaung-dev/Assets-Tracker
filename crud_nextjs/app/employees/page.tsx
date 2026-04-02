@@ -2,6 +2,8 @@ import { getEmployees } from "@/services/employees-api";
 import EmployeeAddForm from "@/app/employees/components/employee-add-form";
 import EmployeeRowActions from "@/app/employees/employee-row-actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function EmployeesPage() {
     const employees = await getEmployees();
 

@@ -5,6 +5,8 @@ import { getCategories } from "@/services/categories-api";
 import { getEmployees } from "@/services/employees-api";
 import type { Asset } from "@/types/assets-types";
 
+export const dynamic = "force-dynamic";
+
 export default async function AssetsPage() {
     const [assets, categories, employees] = await Promise.all([
         getAssets(),
