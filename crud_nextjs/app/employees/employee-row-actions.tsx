@@ -2,26 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import AssetUpdateForm, {
-    type UpdateAssetFormValues,
-} from "@/app/assets/components/asset-update-form";
+import EmployeeUpdateForm, {
+    type UpdateEmployeeFormValues,
+} from "@/app/employees/components/employee-update-form";
 import DeleteConfirmationForm from "@/components/delete-confirmation-form";
-import { deleteAsset, updateAsset } from "@/services/assets-api";
-import type { Asset } from "@/types/assets-types";
-import type { Category } from "@/types/categories-types";
+import { deleteEmployee, updateEmployee } from "@/services/employees-api";
 import type { Employee } from "@/types/employees-types";
 
-type AssetRowActionsProps = {
-    asset: Asset;
-    categories: Category[];
-    employees: Employee[];
+type EmployeeRowActionsProps = {
+    employee: Employee;
 };
 
-export default function AssetRowActions({
-    asset,
-    categories,
-    employees,
-}: AssetRowActionsProps) {
+export default function EmployeeRowActions({ employee }: EmployeeRowActionsProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -39,35 +31,35 @@ export default function AssetRowActions({
         });
     };
 
-    const handleDelete = async () => {
-        setDeleteError(null);
-        setIsDeleting(true);
-        try {
-            await deleteAsset(asset.id);
-        } catch {
-            setDeleteError("Failed to delete asset.");
-            return;
-        } finally {
-            setIsDeleting(false);
-        }
-
-        setIsDeleteDialogOpen(false);
-        refreshTable();
-    };
-
-    const handleEdit = async (values: UpdateAssetFormValues) => {
+    const handleUpdate = async (values: UpdateEmployeeFormValues) => {
         setUpdateError(null);
         setIsUpdating(true);
         try {
-            await updateAsset(asset.id, values);
+            await updateEmployee(employee.id, values);
         } catch {
-            setUpdateError("Failed to update asset.");
+            setUpdateError("Failed to update employee.");
             return;
         } finally {
             setIsUpdating(false);
         }
 
         setIsUpdateDialogOpen(false);
+        refreshTable();
+    };
+
+    const handleDelete = async () => {
+        setDeleteError(null);
+        setIsDeleting(true);
+        try {
+            await deleteEmployee(employee.id);
+        } catch {
+            setDeleteError("Failed to delete employee.");
+            return;
+        } finally {
+            setIsDeleting(false);
+        }
+
+        setIsDeleteDialogOpen(false);
         refreshTable();
     };
 
@@ -99,10 +91,8 @@ export default function AssetRowActions({
             </div>
 
             {isUpdateDialogOpen && (
-                <AssetUpdateForm
-                    asset={asset}
-                    categories={categories}
-                    employees={employees}
+                <EmployeeUpdateForm
+                    employee={employee}
                     isSubmitting={isUpdating}
                     errorMessage={updateError}
                     onClose={() => {
@@ -110,14 +100,14 @@ export default function AssetRowActions({
                             setIsUpdateDialogOpen(false);
                         }
                     }}
-                    onSubmit={handleEdit}
+                    onSubmit={handleUpdate}
                 />
             )}
 
             {isDeleteDialogOpen && (
                 <DeleteConfirmationForm
-                    itemName={asset.name}
-                    itemType="asset"
+                    itemName={employee.name}
+                    itemType="employee"
                     isSubmitting={isDeleting}
                     errorMessage={deleteError}
                     onClose={() => {

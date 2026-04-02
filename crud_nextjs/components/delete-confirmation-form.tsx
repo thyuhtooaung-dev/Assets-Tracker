@@ -1,32 +1,34 @@
 "use client";
 
-type AssetDeleteConfirmationFormProps = {
-    assetName: string;
+type DeleteConfirmationFormProps = {
+    itemName: string;
+    itemType: string;
     isSubmitting: boolean;
     errorMessage: string | null;
     onClose: () => void;
     onConfirm: () => void | Promise<void>;
 };
 
-export default function AssetDeleteConfirmationForm({
-    assetName,
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+export default function DeleteConfirmationForm({
+    itemName,
+    itemType,
     isSubmitting,
     errorMessage,
     onClose,
     onConfirm,
-}: AssetDeleteConfirmationFormProps) {
+}: DeleteConfirmationFormProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
             <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-xl">
                 <header className="mb-3">
-                    <h2 className="text-xl font-semibold">Delete Asset</h2>
+                    <h2 className="text-xl font-semibold">Delete {capitalize(itemType)}</h2>
                 </header>
-                <p className="mb-2 text-sm text-muted-foreground">
-                    This action cannot be undone.
-                </p>
+                <p className="mb-2 text-sm text-muted-foreground">This action cannot be undone.</p>
                 <p className="mb-5 text-sm">
                     Are you sure you want to delete{" "}
-                    <span className="font-semibold text-foreground">{assetName}</span>?
+                    <span className="font-semibold text-foreground">{itemName}</span>?
                 </p>
 
                 {errorMessage && <p className="mb-4 text-sm text-destructive">{errorMessage}</p>}

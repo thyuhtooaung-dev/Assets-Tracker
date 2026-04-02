@@ -40,10 +40,10 @@ export default async function Home() {
   ];
 
   return (
-    <section className="min-h-[calc(100vh-72px)] bg-slate-50 p-6 md:p-8">
+    <section className="min-h-[calc(100vh-72px)] bg-background p-6 md:p-8">
       <header className="mb-6">
-        <h1 className="text-3xl font-semibold text-slate-800">Dashboard</h1>
-        <p className="text-slate-500">Quick overview of your asset system</p>
+        <h1 className="text-3xl font-semibold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground">Quick overview of your asset system</p>
       </header>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -53,15 +53,15 @@ export default async function Home() {
           return (
             <article
               key={item.title}
-              className="rounded-2xl border border-[#5F9EA0]/30 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="rounded-2xl border border-border bg-card p-5 text-card-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-[#5F9EA0]/25"
             >
               <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-600">{item.title}</p>
-                <span className="rounded-full bg-[#5F9EA0]/15 p-2 text-[#5F9EA0]">
+                <p className="text-sm font-medium text-muted-foreground">{item.title}</p>
+                <span className="rounded-full border border-border bg-muted p-2 text-[#5F9EA0]">
                   <Icon size={18} />
                 </span>
               </div>
-              <p className="text-4xl font-semibold text-slate-800">{item.value}</p>
+              <p className="text-4xl font-semibold text-foreground">{item.value}</p>
             </article>
           );
         })}

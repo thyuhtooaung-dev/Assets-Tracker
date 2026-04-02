@@ -26,7 +26,8 @@ type AssetUpdateFormProps = {
     onSubmit: (values: UpdateAssetFormValues) => void | Promise<void>;
 };
 
-const getEmployeeOptionValue = (employee: Employee) => `${employee.name} (${employee.email})`;
+const getEmployeeOptionValue = (employee: { name: string; email: string }) =>
+    `${employee.name} (${employee.email})`;
 
 export default function AssetUpdateForm({
     asset,

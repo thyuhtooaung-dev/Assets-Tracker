@@ -1,43 +1,66 @@
+"use client";
+
 import Link from "next/link";
 import { Boxes, Gauge, LogOutIcon, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default function Sidebar() {
+type SidebarProps = {
+    onNavigate?: () => void;
+    isCollapsed?: boolean;
+};
+
+export default function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
+    const handleNavigate = () => {
+        onNavigate?.();
+    };
+
+    const navLinkClassName =
+        "flex items-center justify-center gap-2 rounded-xl border border-sidebar-border bg-sidebar-accent px-4 py-4 font-medium text-sidebar-foreground shadow-sm transition hover:border-[#5F9EA0]/40 hover:bg-[#5F9EA0]/15";
+
     return (
-        <main className={"flex h-full flex-col items-center gap-20 overflow-y-auto bg-card p-6 text-card-foreground"}>
+        <main
+            className={cn(
+                "flex h-full flex-col gap-20 overflow-y-auto bg-sidebar p-6 text-sidebar-foreground transition-opacity",
+                isCollapsed ? "opacity-0" : "opacity-100",
+            )}
+        >
             <header>
-                <h1 className={"text-center text-4xl"}>
+                <h1 className={"text-center text-4xl font-semibold"}>
                     Assets <span className={"text-[#5F9EA0]"}>Tracker</span>
                 </h1>
             </header>
             <section className={"flex flex-col gap-6 w-full"}>
                 <Link
                     href={"/"}
-                    className={"flex items-center justify-center gap-2 rounded-xl bg-[#5F9EA0] py-4 font-medium text-white shadow-sm transition hover:bg-[#4e8688] hover:shadow-md"}
+                    onClick={handleNavigate}
+                    className={navLinkClassName}
                 >
                     <Gauge size={18} />
                     DashBoard
                 </Link>
                 <Link
                     href={"/assets"}
-                    className={"flex items-center justify-center gap-2 rounded-xl bg-[#5F9EA0] py-4 font-medium text-white shadow-sm transition hover:bg-[#4e8688] hover:shadow-md"}
+                    onClick={handleNavigate}
+                    className={navLinkClassName}
                 >
                     <Boxes size={18} />
                     Assets
                 </Link>
                 <Link
                     href={"/employees"}
-                    className={"flex items-center justify-center gap-2 rounded-xl bg-[#5F9EA0] py-4 font-medium text-white shadow-sm transition hover:bg-[#4e8688] hover:shadow-md"}
+                    onClick={handleNavigate}
+                    className={navLinkClassName}
                 >
                     <Users size={18} />
                     Employees
                 </Link>
             </section>
-            <footer className={"mt-auto flex w-full items-center justify-center gap-4"}>
+            <footer className={"mt-auto flex w-full items-center justify-center gap-4 text-muted-foreground"}>
                 LogOut
                 <button
                     type="button"
                     aria-label="Log out"
-                    className="rounded-full bg-[#5F9EA0]/20 p-2 text-[#5F9EA0] transition hover:bg-[#5F9EA0]/30"
+                    className="rounded-full border border-sidebar-border bg-sidebar-accent p-2 text-[#5F9EA0] transition hover:bg-[#5F9EA0]/15"
                 >
                     <LogOutIcon size={20} />
                 </button>
