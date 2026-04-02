@@ -39,10 +39,7 @@ export default function RootLayout({
     >
       <body className="h-screen overflow-hidden">
         <ThemeProvider
-          attribute="class"
           defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
         >
           <AppShell>{children}</AppShell>
         </ThemeProvider>

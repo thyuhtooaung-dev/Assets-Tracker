@@ -14,7 +14,7 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
           type="button"
           onClick={onToggleSidebar}
           aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-          className="inline-flex items-center gap-2 rounded-md border border-border bg-muted/70 px-3 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+          className="cursor-pointer inline-flex items-center gap-2 rounded-md border border-border bg-muted/70 px-3 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
         >
           {isSidebarOpen ? <X size={18} /> : <PanelLeft size={18} />}
           <span className="hidden md:inline">
@@ -27,14 +27,14 @@ export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) 
           <button
             type="button"
             aria-label="Notifications"
-            className="rounded-full border border-border bg-muted p-2 text-[#5F9EA0] transition hover:bg-[#5F9EA0]/20"
+            className="cursor-pointer rounded-full border border-border bg-muted p-2 text-[#5F9EA0] transition hover:bg-[#5F9EA0]/20"
           >
             <Bell size={20} />
           </button>
           <button
             type="button"
             aria-label="Settings"
-            className="rounded-full border border-border bg-muted p-2 text-[#5F9EA0] transition hover:bg-[#5F9EA0]/20"
+            className="cursor-pointer rounded-full border border-border bg-muted p-2 text-[#5F9EA0] transition hover:bg-[#5F9EA0]/20"
           >
             <Settings size={20} />
           </button>

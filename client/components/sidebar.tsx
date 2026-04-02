@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Boxes, Gauge, LogOutIcon, Users } from "lucide-react";
+import { Boxes, ClipboardList, Gauge, LogOutIcon, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SidebarProps = {
@@ -26,7 +26,7 @@ export default function Sidebar({ onNavigate, isCollapsed = false }: SidebarProp
         >
             <header>
                 <h1 className={"text-center text-4xl font-semibold"}>
-                    Assets <span className={"text-[#5F9EA0]"}>Tracker</span>
+                    Assets <span className={"text-[#5F9EA0] dark:text-rose-500"}>Tracker</span>
                 </h1>
             </header>
             <section className={"flex flex-col gap-6 w-full"}>
@@ -53,6 +53,14 @@ export default function Sidebar({ onNavigate, isCollapsed = false }: SidebarProp
                 >
                     <Users size={18} />
                     Employees
+                </Link>
+                <Link
+                    href={"/assignments"}
+                    onClick={handleNavigate}
+                    className={navLinkClassName}
+                >
+                    <ClipboardList size={18} />
+                    Assignments
                 </Link>
             </section>
             <footer className={"mt-auto flex w-full items-center justify-center gap-4 text-muted-foreground"}>

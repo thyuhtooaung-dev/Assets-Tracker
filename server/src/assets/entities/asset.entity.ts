@@ -3,11 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Employee } from '../../employees/entities/employee.entity';
 import { Category } from '../../categories/entities/category.entity';
+import { Assignment } from '../../assignments/entities/assignment.entity';
 
 export enum AssetStatus {
   AVAILABLE = 'available',
@@ -35,6 +37,9 @@ export class Asset {
 
   @ManyToOne(() => Employee, (employee) => employee.assets, { nullable: true })
   employee: Employee | null;
+
+  @OneToMany(() => Assignment, (assignment) => assignment.asset)
+  assignments: Assignment[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
