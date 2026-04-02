@@ -13,7 +13,7 @@ import { EmployeesModule } from './employees/employees.module';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       ssl: true,
       extra: {
         ssl: {
