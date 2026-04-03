@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import AssetUpdateForm, {
-    type UpdateAssetFormValues,
+  type UpdateAssetFormValues,
 } from "@/app/assets/components/asset-update-form";
 import DeleteConfirmationForm from "@/components/delete-confirmation-form";
 import { deleteAsset, updateAsset } from "@/services/assets-api";
@@ -11,116 +11,119 @@ import type { Asset } from "@/types/assets-types";
 import type { Category } from "@/types/categories-types";
 
 type AssetRowActionsProps = {
-    asset: Asset;
-    categories: Category[];
+  asset: Asset;
+  categories: Category[];
 };
 
-export default function AssetRowActions({ asset, categories }: AssetRowActionsProps) {
-    const router = useRouter();
-    const [isPending, startTransition] = useTransition();
-    const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [updateError, setUpdateError] = useState<string | null>(null);
-    const [deleteError, setDeleteError] = useState<string | null>(null);
+export default function AssetRowActions({
+  asset,
+  categories,
+}: AssetRowActionsProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
-    const isBusy = isPending || isUpdating || isDeleting;
+  const isBusy = isPending || isUpdating || isDeleting;
 
-    const refreshTable = () => {
-        startTransition(() => {
-            router.refresh();
-        });
-    };
+  const refreshTable = () => {
+    startTransition(() => {
+      router.refresh();
+    });
+  };
 
-    const handleDelete = async () => {
-        setDeleteError(null);
-        setIsDeleting(true);
-        try {
-            await deleteAsset(asset.id);
-        } catch {
-            setDeleteError("Failed to delete asset.");
-            return;
-        } finally {
-            setIsDeleting(false);
-        }
+  const handleDelete = async () => {
+    setDeleteError(null);
+    setIsDeleting(true);
+    try {
+      await deleteAsset(asset.id);
+    } catch {
+      setDeleteError("Failed to delete asset.");
+      return;
+    } finally {
+      setIsDeleting(false);
+    }
 
-        setIsDeleteDialogOpen(false);
-        refreshTable();
-    };
+    setIsDeleteDialogOpen(false);
+    refreshTable();
+  };
 
-    const handleEdit = async (values: UpdateAssetFormValues) => {
-        setUpdateError(null);
-        setIsUpdating(true);
-        try {
-            await updateAsset(asset.id, values);
-        } catch {
-            setUpdateError("Failed to update asset.");
-            return;
-        } finally {
-            setIsUpdating(false);
-        }
+  const handleEdit = async (values: UpdateAssetFormValues) => {
+    setUpdateError(null);
+    setIsUpdating(true);
+    try {
+      await updateAsset(asset.id, values);
+    } catch {
+      setUpdateError("Failed to update asset.");
+      return;
+    } finally {
+      setIsUpdating(false);
+    }
 
-        setIsUpdateDialogOpen(false);
-        refreshTable();
-    };
+    setIsUpdateDialogOpen(false);
+    refreshTable();
+  };
 
-    return (
-        <>
-            <div className="flex items-center gap-2">
-                <button
-                    type="button"
-                    onClick={() => {
-                        setUpdateError(null);
-                        setIsUpdateDialogOpen(true);
-                    }}
-                    disabled={isBusy}
-                    className="rounded-md bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                    Edit
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        setDeleteError(null);
-                        setIsDeleteDialogOpen(true);
-                    }}
-                    disabled={isBusy}
-                    className="rounded-md bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                    Delete
-                </button>
-            </div>
+  return (
+    <>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setUpdateError(null);
+            setIsUpdateDialogOpen(true);
+          }}
+          disabled={isBusy}
+          className="rounded-md bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setDeleteError(null);
+            setIsDeleteDialogOpen(true);
+          }}
+          disabled={isBusy}
+          className="rounded-md bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          Delete
+        </button>
+      </div>
 
-            {isUpdateDialogOpen && (
-                <AssetUpdateForm
-                    asset={asset}
-                    categories={categories}
-                    isSubmitting={isUpdating}
-                    errorMessage={updateError}
-                    onClose={() => {
-                        if (!isUpdating) {
-                            setIsUpdateDialogOpen(false);
-                        }
-                    }}
-                    onSubmit={handleEdit}
-                />
-            )}
+      {isUpdateDialogOpen && (
+        <AssetUpdateForm
+          asset={asset}
+          categories={categories}
+          isSubmitting={isUpdating}
+          errorMessage={updateError}
+          onClose={() => {
+            if (!isUpdating) {
+              setIsUpdateDialogOpen(false);
+            }
+          }}
+          onSubmit={handleEdit}
+        />
+      )}
 
-            {isDeleteDialogOpen && (
-                <DeleteConfirmationForm
-                    itemName={asset.name}
-                    itemType="asset"
-                    isSubmitting={isDeleting}
-                    errorMessage={deleteError}
-                    onClose={() => {
-                        if (!isDeleting) {
-                            setIsDeleteDialogOpen(false);
-                        }
-                    }}
-                    onConfirm={handleDelete}
-                />
-            )}
-        </>
-    );
+      {isDeleteDialogOpen && (
+        <DeleteConfirmationForm
+          itemName={asset.name}
+          itemType="asset"
+          isSubmitting={isDeleting}
+          errorMessage={deleteError}
+          onClose={() => {
+            if (!isDeleting) {
+              setIsDeleteDialogOpen(false);
+            }
+          }}
+          onConfirm={handleDelete}
+        />
+      )}
+    </>
+  );
 }

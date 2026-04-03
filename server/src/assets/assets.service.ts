@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,17 +18,17 @@ export class AssetsService {
   ) {}
 
   async create(createAssetDto: CreateAssetDto) {
-    const { categoryId, employeeId, ...assetData } = createAssetDto;
+    const { categoryId, ...assetData } = createAssetDto;
+
+    if (assetData.status === AssetStatus.ASSIGNED) {
+      throw new BadRequestException(
+        'Use /assignments to assign assets to employees',
+      );
+    }
 
     const newAsset = this.assetRepository.create({
       ...assetData,
       category: { id: categoryId } as Asset['category'],
-      ...(employeeId
-        ? ({ employee: { id: employeeId } as Asset['employee'] } as Pick<
-            Asset,
-            'employee'
-          >)
-        : {}),
     });
 
     return this.assetRepository.save(newAsset);
@@ -77,24 +81,36 @@ export class AssetsService {
 
   async update(id: string, updateAssetDto: UpdateAssetDto) {
     const asset = await this.findOne(id);
-    const { categoryId, employeeId, ...assetData } = updateAssetDto;
+    const { categoryId, status, ...assetData } = updateAssetDto;
+
+    if (
+      status === AssetStatus.ASSIGNED &&
+      asset.status !== AssetStatus.ASSIGNED
+    ) {
+      throw new BadRequestException(
+        'Use /assignments to assign assets to employees',
+      );
+    }
+
+    if (
+      asset.status === AssetStatus.ASSIGNED &&
+      status !== undefined &&
+      status !== AssetStatus.ASSIGNED
+    ) {
+      throw new BadRequestException(
+        'Use /assignments to return an assigned asset before changing its status',
+      );
+    }
 
     const updatedAsset: Asset = {
       ...asset,
       ...assetData,
+      ...(status !== undefined ? ({ status } as Pick<Asset, 'status'>) : {}),
       ...(categoryId !== undefined
         ? ({ category: { id: categoryId } as Asset['category'] } as Pick<
             Asset,
             'category'
           >)
-        : {}),
-      ...(employeeId !== undefined
-        ? employeeId === null
-          ? ({ employee: null } as Pick<Asset, 'employee'>)
-          : ({ employee: { id: employeeId } as Asset['employee'] } as Pick<
-              Asset,
-              'employee'
-            >)
         : {}),
     };
 

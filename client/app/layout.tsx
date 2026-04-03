@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Oswald, JetBrains_Mono } from "next/font/google";
+import React from "react";
 import "./globals.css";
 import AppShell from "@/components/app-shell";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -41,9 +42,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="h-screen overflow-hidden" suppressHydrationWarning>
-        <ThemeProvider
-          defaultTheme="light"
-        >
+        <ThemeProvider defaultTheme="light">
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>

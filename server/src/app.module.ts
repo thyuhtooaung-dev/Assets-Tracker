@@ -5,6 +5,8 @@ import { AssetsModule } from './assets/assets.module';
 import { CategoriesModule } from './categories/categories.module';
 import { EmployeesModule } from './employees/employees.module';
 import { AssignmentsModule } from './assignments/assignments.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -28,5 +30,7 @@ import { AssignmentsModule } from './assignments/assignments.module';
     EmployeesModule,
     AssignmentsModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

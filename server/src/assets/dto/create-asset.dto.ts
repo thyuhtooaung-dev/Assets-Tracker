@@ -23,8 +23,4 @@ export class CreateAssetDto {
   @IsUUID()
   @IsNotEmpty()
   categoryId: string;
-
-  @IsUUID()
-  @IsOptional()
-  employeeId?: string | null;
 }

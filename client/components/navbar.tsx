@@ -6,7 +6,10 @@ type NavbarProps = {
   onToggleSidebar: () => void;
 };
 
-export default function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
+export default function Navbar({
+  isSidebarOpen,
+  onToggleSidebar,
+}: NavbarProps) {
   return (
     <nav className="shrink-0 border-b border-border bg-card/95 px-6 py-4 backdrop-blur">
       <div className="flex items-center justify-between">
