@@ -16,7 +16,10 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
-  title: "Assets Tracker",
+  title: {
+    default: "Assets Tracker",
+    template: "Assets Tracker | %s",
+  },
   description: "A directory of assets",
 };
 
@@ -37,7 +40,7 @@ export default function RootLayout({
       )}
       suppressHydrationWarning
     >
-      <body className="h-screen overflow-hidden">
+      <body className="h-screen overflow-hidden" suppressHydrationWarning>
         <ThemeProvider
           defaultTheme="light"
         >

@@ -7,8 +7,7 @@ import { createAsset } from "@/services/assets-api";
 import type { AssetStatus } from "@/types/assets-types";
 import type { Category } from "@/types/categories-types";
 import type { Employee } from "@/types/employees-types";
-
-const ASSET_STATUSES: AssetStatus[] = ["available", "assigned", "repairing", "broken"];
+import { ASSET_STATUS_OPTIONS } from "@/lib/asset-status";
 
 type AssetAddFormProps = {
     categories: Category[];
@@ -57,7 +56,12 @@ export default function AssetAddForm({ categories, employees }: AssetAddFormProp
         }
 
         let employeeId: string | undefined;
-        if (normalizedEmployeeInput) {
+        if (status === "assigned") {
+            if (!normalizedEmployeeInput) {
+                setValidationMessage("Assign employee is required when status is assigned.");
+                return;
+            }
+
             const matchedEmployee = employees.find((employee) => {
                 const employeeLabel = getEmployeeOptionValue(employee).toLowerCase();
                 const lowerInput = normalizedEmployeeInput.toLowerCase();
@@ -70,7 +74,7 @@ export default function AssetAddForm({ categories, employees }: AssetAddFormProp
             });
 
             if (!matchedEmployee) {
-                setValidationMessage("Select an employee from suggestions or leave it blank.");
+                setValidationMessage("Select an employee from suggestions.");
                 return;
             }
 
@@ -150,11 +154,18 @@ export default function AssetAddForm({ categories, employees }: AssetAddFormProp
                                 Status
                                 <select
                                     value={status}
-                                    onChange={(event) => setStatus(event.target.value as AssetStatus)}
+                                    onChange={(event) => {
+                                        const nextStatus = event.target.value as AssetStatus;
+                                        setStatus(nextStatus);
+
+                                        if (nextStatus !== "assigned") {
+                                            setEmployeeInput("");
+                                        }
+                                    }}
                                     className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-[#5F9EA0] focus:ring-2 focus:ring-[#5F9EA0]/30"
                                     disabled={isBusy}
                                 >
-                                    {ASSET_STATUSES.map((assetStatus) => (
+                                    {ASSET_STATUS_OPTIONS.map((assetStatus) => (
                                         <option key={assetStatus} value={assetStatus}>
                                             {assetStatus}
                                         </option>
@@ -182,23 +193,25 @@ export default function AssetAddForm({ categories, employees }: AssetAddFormProp
                                 </select>
                             </label>
 
-                            <label className="block text-sm font-medium">
-                                Assign Employee
-                                <input
-                                    type="text"
-                                    value={employeeInput}
-                                    onChange={(event) => setEmployeeInput(event.target.value)}
-                                    list="asset-add-employee-suggestions"
-                                    placeholder="Search by name or email"
-                                    className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-[#5F9EA0] focus:ring-2 focus:ring-[#5F9EA0]/30"
-                                    disabled={isBusy}
-                                />
-                                <datalist id="asset-add-employee-suggestions">
-                                    {employees.map((employee) => (
-                                        <option key={employee.id} value={getEmployeeOptionValue(employee)} />
-                                    ))}
-                                </datalist>
-                            </label>
+                            {status === "assigned" && (
+                                <label className="block text-sm font-medium">
+                                    Assign Employee
+                                    <input
+                                        type="text"
+                                        value={employeeInput}
+                                        onChange={(event) => setEmployeeInput(event.target.value)}
+                                        list="asset-add-employee-suggestions"
+                                        placeholder="Search by name or email"
+                                        className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-[#5F9EA0] focus:ring-2 focus:ring-[#5F9EA0]/30"
+                                        disabled={isBusy}
+                                    />
+                                    <datalist id="asset-add-employee-suggestions">
+                                        {employees.map((employee) => (
+                                            <option key={employee.id} value={getEmployeeOptionValue(employee)} />
+                                        ))}
+                                    </datalist>
+                                </label>
+                            )}
 
                             {(validationMessage || errorMessage) && (
                                 <p className="text-sm text-destructive">

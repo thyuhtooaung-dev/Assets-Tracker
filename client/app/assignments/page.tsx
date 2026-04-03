@@ -1,35 +1,20 @@
 import AssignmentAddForm from "@/app/assignments/components/assignment-add-form";
+import AssignmentConditionsCell from "@/app/assignments/components/assignment-conditions-cell";
 import AssignmentNotesCell from "@/app/assignments/components/assignment-notes-cell";
 import AssignmentRowActions from "@/app/assignments/assignment-row-actions";
+import {
+  formatDateTime,
+  getAssignmentStatusBadgeClassName,
+} from "@/lib/assignment-formatters";
 import { getAssets } from "@/services/assets-api";
 import { getAssignments } from "@/services/assignments-api";
 import { getEmployees } from "@/services/employees-api";
-import type { Assignment } from "@/types/assignments-types";
-import AssignmentConditionsCell from "@/app/assignments/components/assignment-conditions-cell";
+
+export const metadata = {
+  title: "Assignments",
+};
 
 export const dynamic = "force-dynamic";
-
-const formatDateTime = (dateValue: string | null) => {
-  if (!dateValue) {
-    return "-";
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "numeric",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(dateValue));
-};
-
-const getStatusClassName = (status: Assignment["status"]) => {
-  if (status === "active") {
-    return "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300";
-  }
-
-  return "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300";
-};
 
 export default async function AssignmentsPage() {
   const [assignments, assets, employees] = await Promise.all([
@@ -109,7 +94,7 @@ export default async function AssignmentsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-block rounded-full px-2 py-1 text-xs font-semibold ${getStatusClassName(
+                      className={`inline-block rounded-full px-2 py-1 text-xs font-semibold ${getAssignmentStatusBadgeClassName(
                         assignment.status,
                       )}`}
                     >

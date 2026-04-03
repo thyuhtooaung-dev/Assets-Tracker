@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 
+const CATEGORY_RELATIONS = ['assets'] as const;
+
 @Injectable()
 export class CategoriesService {
   constructor(
@@ -15,12 +17,12 @@ export class CategoriesService {
   async create(createCategoryDto: CreateCategoryDto) {
     const newCategory = this.categoryRepository.create(createCategoryDto);
 
-    return await this.categoryRepository.save(newCategory);
+    return this.categoryRepository.save(newCategory);
   }
 
   async findAll() {
     return this.categoryRepository.find({
-      relations: ['assets'],
+      relations: [...CATEGORY_RELATIONS],
       order: {
         updatedAt: 'DESC',
       },
@@ -30,7 +32,7 @@ export class CategoriesService {
   async findOne(id: string) {
     const category = await this.categoryRepository.findOne({
       where: { id },
-      relations: ['assets'],
+      relations: [...CATEGORY_RELATIONS],
     });
 
     if (!category) {
@@ -48,7 +50,7 @@ export class CategoriesService {
       ...updateCategoryDto,
     };
 
-    return await this.categoryRepository.save(updatedCategory);
+    return this.categoryRepository.save(updatedCategory);
   }
 
   async remove(id: string) {

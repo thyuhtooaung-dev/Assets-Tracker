@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Asset, AssetStatus } from './entities/asset.entity';
 import { Repository } from 'typeorm';
 
+const ASSET_RELATIONS = ['category', 'employee'] as const;
+
 @Injectable()
 export class AssetsService {
   constructor(
@@ -25,12 +27,12 @@ export class AssetsService {
         : {}),
     });
 
-    return await this.assetRepository.save(newAsset);
+    return this.assetRepository.save(newAsset);
   }
 
   async findAll(): Promise<Asset[]> {
-    return await this.assetRepository.find({
-      relations: ['category', 'employee'],
+    return this.assetRepository.find({
+      relations: [...ASSET_RELATIONS],
       order: {
         updatedAt: 'DESC',
       },
@@ -40,7 +42,7 @@ export class AssetsService {
   async findOne(id: string) {
     const asset = await this.assetRepository.findOne({
       where: { id },
-      relations: ['category', 'employee'],
+      relations: [...ASSET_RELATIONS],
     });
 
     if (!asset) {
@@ -96,7 +98,7 @@ export class AssetsService {
         : {}),
     };
 
-    return await this.assetRepository.save(updatedAsset);
+    return this.assetRepository.save(updatedAsset);
   }
 
   async remove(id: string) {

@@ -14,7 +14,6 @@ type UpdateAssetPayload = {
     serialNumber: string;
     status: AssetStatus;
     categoryId: string;
-    employeeId?: string | null;
 };
 
 export async function getAssets(): Promise<Asset[]> {

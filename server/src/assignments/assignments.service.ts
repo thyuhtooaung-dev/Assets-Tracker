@@ -12,6 +12,8 @@ import { ReturnAssignmentDto } from './dto/return-assignment.dto';
 import { Asset, AssetStatus } from '../assets/entities/asset.entity';
 import { Employee } from '../employees/entities/employee.entity';
 
+const ASSIGNMENT_RELATIONS = ['asset', 'asset.category', 'employee'] as const;
+
 @Injectable()
 export class AssignmentsService {
   constructor(
@@ -23,6 +25,22 @@ export class AssignmentsService {
     private employeeRepository: Repository<Employee>,
     private dataSource: DataSource,
   ) {}
+
+  private async findAssignmentOrThrow(
+    id: string,
+    repository: Repository<Assignment> = this.assignmentRepository,
+  ) {
+    const assignment = await repository.findOne({
+      where: { id },
+      relations: [...ASSIGNMENT_RELATIONS],
+    });
+
+    if (!assignment) {
+      throw new NotFoundException(`Assignment with id "${id}" not found`);
+    }
+
+    return assignment;
+  }
 
   async create(createAssignmentDto: CreateAssignmentDto) {
     const [asset, employee, activeAssignment] = await Promise.all([
@@ -99,24 +117,16 @@ export class AssignmentsService {
       assetToUpdate.status = AssetStatus.ASSIGNED;
       await assetRepository.save(assetToUpdate);
 
-      const createdAssignment = await assignmentRepository.findOne({
-        where: { id: savedAssignment.id },
-        relations: ['asset', 'asset.category', 'employee'],
-      });
-
-      if (!createdAssignment) {
-        throw new NotFoundException(
-          `Assignment with id "${savedAssignment.id}" not found`,
-        );
-      }
-
-      return createdAssignment;
+      return this.findAssignmentOrThrow(
+        savedAssignment.id,
+        assignmentRepository,
+      );
     });
   }
 
   async findAll() {
     return this.assignmentRepository.find({
-      relations: ['asset', 'asset.category', 'employee'],
+      relations: [...ASSIGNMENT_RELATIONS],
       order: {
         assignedAt: 'DESC',
       },
@@ -126,7 +136,7 @@ export class AssignmentsService {
   async findActive() {
     return this.assignmentRepository.find({
       where: { status: AssignmentStatus.ACTIVE },
-      relations: ['asset', 'asset.category', 'employee'],
+      relations: [...ASSIGNMENT_RELATIONS],
       order: {
         assignedAt: 'DESC',
       },
@@ -134,16 +144,7 @@ export class AssignmentsService {
   }
 
   async findOne(id: string) {
-    const assignment = await this.assignmentRepository.findOne({
-      where: { id },
-      relations: ['asset', 'asset.category', 'employee'],
-    });
-
-    if (!assignment) {
-      throw new NotFoundException(`Assignment with id "${id}" not found`);
-    }
-
-    return assignment;
+    return this.findAssignmentOrThrow(id);
   }
 
   async returnAssignment(id: string, returnAssignmentDto: ReturnAssignmentDto) {
@@ -168,14 +169,10 @@ export class AssignmentsService {
       const assignmentRepository = manager.getRepository(Assignment);
       const assetRepository = manager.getRepository(Asset);
 
-      const assignmentToUpdate = await assignmentRepository.findOne({
-        where: { id },
-        relations: ['asset', 'employee'],
-      });
-
-      if (!assignmentToUpdate) {
-        throw new NotFoundException(`Assignment with id "${id}" not found`);
-      }
+      const assignmentToUpdate = await this.findAssignmentOrThrow(
+        id,
+        assignmentRepository,
+      );
 
       assignmentToUpdate.returnedAt = returnAssignmentDto.returnedAt
         ? new Date(returnAssignmentDto.returnedAt)
@@ -202,16 +199,7 @@ export class AssignmentsService {
       asset.status = nextAssetStatus;
       await assetRepository.save(asset);
 
-      const returnedAssignment = await assignmentRepository.findOne({
-        where: { id },
-        relations: ['asset', 'asset.category', 'employee'],
-      });
-
-      if (!returnedAssignment) {
-        throw new NotFoundException(`Assignment with id "${id}" not found`);
-      }
-
-      return returnedAssignment;
+      return this.findAssignmentOrThrow(id, assignmentRepository);
     });
   }
 

@@ -4,35 +4,27 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import type { Asset, AssetStatus } from "@/types/assets-types";
 import type { Category } from "@/types/categories-types";
-import type { Employee } from "@/types/employees-types";
-
-const ASSET_STATUSES: AssetStatus[] = ["available", "assigned", "repairing", "broken"];
+import { ASSET_STATUS_OPTIONS } from "@/lib/asset-status";
 
 export type UpdateAssetFormValues = {
     name: string;
     serialNumber: string;
     status: AssetStatus;
     categoryId: string;
-    employeeId: string | null;
 };
 
 type AssetUpdateFormProps = {
     asset: Asset;
     categories: Category[];
-    employees: Employee[];
     isSubmitting: boolean;
     errorMessage: string | null;
     onClose: () => void;
     onSubmit: (values: UpdateAssetFormValues) => void | Promise<void>;
 };
 
-const getEmployeeOptionValue = (employee: { name: string; email: string }) =>
-    `${employee.name} (${employee.email})`;
-
 export default function AssetUpdateForm({
     asset,
     categories,
-    employees,
     isSubmitting,
     errorMessage,
     onClose,
@@ -42,9 +34,6 @@ export default function AssetUpdateForm({
     const [serialNumber, setSerialNumber] = useState(asset.serialNumber);
     const [status, setStatus] = useState<AssetStatus>(asset.status);
     const [categoryId, setCategoryId] = useState(asset.category.id);
-    const [employeeInput, setEmployeeInput] = useState(
-        asset.employee ? getEmployeeOptionValue(asset.employee) : "",
-    );
     const [validationMessage, setValidationMessage] = useState<string | null>(null);
     const categoryOptions = categories.some((category) => category.id === asset.category.id)
         ? categories
@@ -56,32 +45,10 @@ export default function AssetUpdateForm({
         const normalizedName = name.trim();
         const normalizedSerial = serialNumber.trim();
         const normalizedCategoryId = categoryId.trim();
-        const normalizedEmployeeInput = employeeInput.trim();
 
         if (!normalizedName || !normalizedSerial || !normalizedCategoryId) {
-            setValidationMessage("Name, serial number, and category ID are required.");
+            setValidationMessage("Name, serial number, and category are required.");
             return;
-        }
-
-        let employeeId: string | null = null;
-        if (normalizedEmployeeInput) {
-            const matchedEmployee = employees.find((employee) => {
-                const employeeLabel = getEmployeeOptionValue(employee).toLowerCase();
-                const lowerInput = normalizedEmployeeInput.toLowerCase();
-
-                return (
-                    employeeLabel === lowerInput ||
-                    employee.email.toLowerCase() === lowerInput ||
-                    employee.name.toLowerCase() === lowerInput
-                );
-            });
-
-            if (!matchedEmployee) {
-                setValidationMessage("Select an employee from suggestions or clear this field.");
-                return;
-            }
-
-            employeeId = matchedEmployee.id;
         }
 
         setValidationMessage(null);
@@ -90,7 +57,6 @@ export default function AssetUpdateForm({
             serialNumber: normalizedSerial,
             status,
             categoryId: normalizedCategoryId,
-            employeeId,
         });
     };
 
@@ -135,7 +101,7 @@ export default function AssetUpdateForm({
                             className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-[#5F9EA0] focus:ring-2 focus:ring-[#5F9EA0]/30"
                             disabled={isSubmitting}
                         >
-                            {ASSET_STATUSES.map((assetStatus) => (
+                            {ASSET_STATUS_OPTIONS.map((assetStatus) => (
                                 <option key={assetStatus} value={assetStatus}>
                                     {assetStatus}
                                 </option>
@@ -161,24 +127,6 @@ export default function AssetUpdateForm({
                                 ))
                             )}
                         </select>
-                    </label>
-
-                    <label className="block text-sm font-medium">
-                        Assign Employee
-                        <input
-                            type="text"
-                            value={employeeInput}
-                            onChange={(event) => setEmployeeInput(event.target.value)}
-                            list={`asset-update-employee-suggestions-${asset.id}`}
-                            placeholder="Search by name or email"
-                            className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-[#5F9EA0] focus:ring-2 focus:ring-[#5F9EA0]/30"
-                            disabled={isSubmitting}
-                        />
-                        <datalist id={`asset-update-employee-suggestions-${asset.id}`}>
-                            {employees.map((employee) => (
-                                <option key={employee.id} value={getEmployeeOptionValue(employee)} />
-                            ))}
-                        </datalist>
                     </label>
 
                     {(validationMessage || errorMessage) && (

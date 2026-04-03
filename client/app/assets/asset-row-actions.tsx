@@ -9,19 +9,13 @@ import DeleteConfirmationForm from "@/components/delete-confirmation-form";
 import { deleteAsset, updateAsset } from "@/services/assets-api";
 import type { Asset } from "@/types/assets-types";
 import type { Category } from "@/types/categories-types";
-import type { Employee } from "@/types/employees-types";
 
 type AssetRowActionsProps = {
     asset: Asset;
     categories: Category[];
-    employees: Employee[];
 };
 
-export default function AssetRowActions({
-    asset,
-    categories,
-    employees,
-}: AssetRowActionsProps) {
+export default function AssetRowActions({ asset, categories }: AssetRowActionsProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -102,7 +96,6 @@ export default function AssetRowActions({
                 <AssetUpdateForm
                     asset={asset}
                     categories={categories}
-                    employees={employees}
                     isSubmitting={isUpdating}
                     errorMessage={updateError}
                     onClose={() => {

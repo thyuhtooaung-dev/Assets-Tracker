@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './entities/employee.entity';
 import { Repository } from 'typeorm';
 
+const EMPLOYEE_RELATIONS = ['assets'] as const;
+
 @Injectable()
 export class EmployeesService {
   constructor(
@@ -14,12 +16,12 @@ export class EmployeesService {
 
   async create(createEmployeeDto: CreateEmployeeDto) {
     const newEmployee = this.employeeRepository.create(createEmployeeDto);
-    return await this.employeeRepository.save(newEmployee);
+    return this.employeeRepository.save(newEmployee);
   }
 
   async findAll() {
-    return await this.employeeRepository.find({
-      relations: ['assets'],
+    return this.employeeRepository.find({
+      relations: [...EMPLOYEE_RELATIONS],
       order: {
         updatedAt: 'DESC',
       },
@@ -29,7 +31,7 @@ export class EmployeesService {
   async findOne(id: string) {
     const employee = await this.employeeRepository.findOne({
       where: { id },
-      relations: ['assets'],
+      relations: [...EMPLOYEE_RELATIONS],
     });
 
     if (!employee) {
@@ -55,7 +57,7 @@ export class EmployeesService {
       ...updateEmployeeDto,
     };
 
-    return await this.employeeRepository.save(updatedEmployee);
+    return this.employeeRepository.save(updatedEmployee);
   }
 
   async remove(id: string) {

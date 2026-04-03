@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import type { AssetStatus } from "@/types/assets-types";
 import type { Assignment } from "@/types/assignments-types";
+import { RETURNABLE_ASSET_STATUS_OPTIONS } from "@/lib/asset-status";
 
 export type ReturnAssignmentFormValues = {
     returnedAt?: string;
@@ -19,12 +20,6 @@ type AssignmentReturnFormProps = {
     onClose: () => void;
     onSubmit: (values: ReturnAssignmentFormValues) => void | Promise<void>;
 };
-
-const RETURN_STATUS_OPTIONS: Array<Exclude<AssetStatus, "assigned">> = [
-    "available",
-    "repairing",
-    "broken",
-];
 
 export default function AssignmentReturnForm({
     assignment,
@@ -94,7 +89,7 @@ export default function AssignmentReturnForm({
                             disabled={isSubmitting}
                             className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-[#5F9EA0] focus:ring-2 focus:ring-[#5F9EA0]/30"
                         >
-                            {RETURN_STATUS_OPTIONS.map((statusOption) => (
+                            {RETURNABLE_ASSET_STATUS_OPTIONS.map((statusOption) => (
                                 <option key={statusOption} value={statusOption}>
                                     {statusOption}
                                 </option>

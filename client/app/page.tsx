@@ -1,6 +1,10 @@
 import {PackageCheck, PackageX, Boxes, Users, ShieldUser, PackageMinus} from "lucide-react";
 import { getDashboardStats } from "@/services/dashboard-api";
 
+export const metadata = {
+  title: "Dashboard",
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
